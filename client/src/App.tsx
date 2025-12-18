@@ -21,7 +21,7 @@ interface Profile {
   phone: string;
 }
 
-const API_URL = 'http://localhost:5000/api/users';
+const API_URL = 'http://156.67.25.92:5000/api/users';
 
 export default function App() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
