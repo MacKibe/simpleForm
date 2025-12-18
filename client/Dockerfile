@@ -1,21 +1,14 @@
-# This is my node version
-FROM node:22.21.1-bullseye 
+# Build stage
+FROM node:20-alpine AS build
 
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-
-# Copy ts files
-COPY tsconfig*.json ./
-
-# Will run all dependecies
 RUN npm install
-
-# Copy from source to destination
 COPY . .
+RUN npm run build
 
-# Specifiy which port our app is running on 
-EXPOSE 5173
-
-CMD ["npm","run", "dev"]
+# Serve with nginx
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

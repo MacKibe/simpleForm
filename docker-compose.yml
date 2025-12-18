@@ -1,61 +1,21 @@
-version: "3.8"
+version: "3.9"
 
 services:
-  frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    container_name: client
-    ports:
-      - "5173:5173"
-    environment:
-      - REACT_APP_BACKEND_URL= #your backend url
-    volumes:
-      - ./client:/app
-      - /app/node_modules
-    depends_on:
-      - backend
-    networks:
-      - simple_form_network
-
-  backend:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    container_name: server
+  server:
+    build: ./server
+    container_name: node_server
+    restart: always
+    env_file:
+      - .env
     ports:
       - "5000:5000"
-    environment:
-      - FRONTEND_URL= #your frontend url
-      - PGUSER=${PGUSER}
-      - PGHOST=${PGHOST}
-      - PGDATABASE=${PGDATABASE}
-      - PGPASSWORD=${PGPASSWORD}
-      - PGPORT=${PGPORT}
-    volumes:
-      - ./server:/app
-      - /app/node_modules
+
+  client:
+    build: ./client
+    container_name: vite_client
+    restart: always
     depends_on:
-      - postgres
-    networks:
-      - simple_form_network
-
-  postgres:
-    image: postgres:13
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - server
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - simple_form_network
+      - "5173:80"
 
-volumes:
-  postgres_data:
-
-networks:
-  simple_form_network:
