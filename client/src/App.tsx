@@ -21,7 +21,7 @@ interface Profile {
   phone: string;
 }
 
-const API_URL = 'http://156.67.25.92:5000/api/users';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/users`;
 
 export default function App() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
